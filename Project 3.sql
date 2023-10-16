@@ -27,3 +27,22 @@ GROUP BY sender_id
 ORDER BY COUNT(message_id) desc
 limit(2)
 -- Exercise 6
+select tweet_id
+from tweets
+where length(content) > 15
+-- Exercise 7
+select activity_date,user_id
+from activity
+where activity_date between'2019-06-27' and '2019-07-27'
+group by user_id, activity_date
+having count(activity_date) between'1' and '2'
+-- Exercise 8
+select count(id) 
+from employees
+where joining_date between'2021-12-31' and '2022-08-01'
+-- Exercise 9
+select position('a' in 'Amitah')
+from worker
+-- Exercise 10
+select substring(title from position('2' in title) for 4) as Year, title
+from winemag_p2
