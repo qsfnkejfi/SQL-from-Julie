@@ -35,3 +35,17 @@ group by b.employee_id, b.name
 having count(a.reports_to)>=1
 order by employee_id
 -- Exercise 6
+SELECT a.product_name, SUM(b.unit) as unit
+FROM Products as a
+JOIN Orders as b
+ON a.product_id = b.product_id
+AND b.order_date BETWEEN '2020-02-01' AND '2020-02-29'
+GROUP BY a.product_name
+HAVING SUM(b.unit) >= 100
+-- Exercise 7
+SELECT a.page_id
+FROM pages as a
+LEFT JOIN page_likes b
+ON a.page_id = b.page_id
+WHERE b.page_id IS NULL
+ORDER BY b.page_id
