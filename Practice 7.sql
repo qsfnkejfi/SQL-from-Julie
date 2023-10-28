@@ -34,3 +34,41 @@ FROM(SELECT *,
 WHERE rank = 1
 GROUP BY user_id,transaction_date
 ORDER BY transaction_date
+-- Exercise 5
+SELECT user_id,tweet_date,   
+  ROUND(AVG(tweet_count) OVER (PARTITION BY user_id ORDER BY tweet_date     
+    ROWS BETWEEN 2 PRECEDING AND CURRENT ROW),2) AS roll_avg
+FROM tweets;
+--Exercise 6
+WITH CTE AS (
+  SELECT merchant_id,credit_card_id,amount,
+    EXTRACT(MINUTE FROM transaction_timestamp - 
+    FIRST_VALUE(transaction_timestamp) OVER(PARTITION BY merchant_id, credit_card_id, amount
+      ORDER BY transaction_timestamp)) AS time_gap
+  FROM transactions
+)
+
+SELECT COUNT(DISTINCT merchant_id) AS payment_count
+FROM cte
+WHERE time_gap<=10
+-- Exercise 7
+SELECT category, product, total_spend 
+FROM (SELECT category, product, SUM(spend) AS total_spend,
+    RANK() OVER (
+      PARTITION BY category 
+      ORDER BY SUM(spend) DESC) AS ranking 
+  FROM product_spend
+  WHERE EXTRACT(YEAR FROM transaction_date) = 2022
+  GROUP BY category, product) AS ranked_spending
+WHERE ranking <= 2 
+ORDER BY category, ranking
+-- Exercise 8
+select artist_name,artist_rank 
+from 
+(SELECT a.artist_name,
+dense_rank() over(order by count(c.song_id) desc) artist_rank FROM artists a 
+inner join songs b
+on a.artist_id=b.artist_id
+JOIN global_song_rank c 
+on c.song_id=b.song_id
+and c.rank<=10 group by a.artist_name)x where artist_rank<6 ;
