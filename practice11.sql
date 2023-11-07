@@ -1,3 +1,4 @@
+create view vw_ecommerce_analyst as(
 with cte as 
 (select Extract(year from created_at) as year, Extract(month from created_at) as month, 
 a.category as category,
@@ -22,3 +23,4 @@ lead(TPV) over(partition by category order by year,month ) as next_revenue,
 lead(TPO) over(partition by category order by year,month ) as next_order,
 round(total_profit/total_cost,2) as profit_to_cost_ratio
 from cte)
+)
